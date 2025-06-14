@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Well Do You REALLY Know Your Friend? 👀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --purple: #9c27b0;
+            --pink: #e91e63;
+            --deep-purple: #673ab7;
+            --light-pink: #f8bbd0;
+            --white: #ffffff;
+            --black: #333333;
+            --green: #4caf50;
+            --yellow: #ffeb3b;
+            --blue: #2196f3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--pink), var(--purple), var(--deep-purple));
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--white);
+            position: relative;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2em;
+            color: var(--yellow);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.3);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--pink), var(--purple));
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, var(--purple), var(--pink));
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .question-container {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--black);
+            padding: 1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .option:hover {
+            background: var(--white);
+            transform: translateX(10px);
+        }
+        
+        .option.selected {
+            background: linear-gradient(45deg, var(--blue), var(--green));
+            color: var(--white);
+            transform: translateX(15px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option-emoji {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            margin: 2rem 0;
+            height: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pink), var(--yellow));
+            border-radius: 50px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .result-container {
+            text-align: center;
+            display: none;
+        }
+        
+        .score {
+            font-size: 5rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            background: linear-gradient(45deg, var(--yellow), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .gif-container {
+            margin: 2rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gif-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .share-container {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .share-input {
+            width: 100%;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--black);
+            cursor: pointer;
+        }
+        
+        .emoji-float {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 10s infinite linear;
+            z-index: 1;
+            opacity: 0.8;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .score {
+                font-size: 3.5rem;
+            }
+        }
+        
+        /* Advanced animations */
+        .intro-animation {
+            animation: slideIn 1s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .rotate {
+            animation: rotate 5s infinite linear;
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .glow {
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px var(--white), 0 0 10px var(--white);
+            }
+            to {
+                text-shadow: 0 0 10px var(--yellow), 0 0 20px var(--pink), 0 0 30px var(--purple);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating emojis -->
+    <div class="emoji-float" style="top: 10%; left: 5%; animation-delay: 0s;">🤩</div>
+    <div class="emoji-float" style="top: 20%; right: 8%; animation-delay: 1s;">💖</div>
+    <div class="emoji-float" style="top: 50%; left: 3%; animation-delay: 2s;">🎯</div>
+    <div class="emoji-float" style="bottom: 20%; right: 5%; animation-delay: 3s;">💫</div>
+    <div class="emoji-float" style="top: 30%; right: 15%; animation-delay: 4s;">👀</div>
+    <div class="emoji-float" style="bottom: 30%; left: 10%; animation-delay: 5s;">🌈</div>
+    
+    <!-- Confetti container (hidden by default) -->
+    <div class="confetti" id="confetti-container"></div>
+    
+    <div class="container">
+        <!-- Landing Page -->
+        <div class="landing-page intro-animation" id="landing-page">
+            <h1>How Well Do You <span class="cursive">REALLY</span> Know Your Friend? <span class="rotate">👀</span></h1>
+            
+            <div class="card bounce">
+                <div class="form-group">
+                    <label for="user-name">Your Name <span class="glow">✨</span></label>
+                    <input type="text" id="user-name" placeholder="Enter your name...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="user-age">Your Age <span class="glow">🎂</span></label>
+                    <select id="user-age">
+                        <option value="" disabled selected>Select your age</option>
+                        <!-- Options from 13 to 60 -->
+                        <script>
+                            for (let i = 13; i <= 60; i++) {
+                                document.write(`<option value="${i}">${i} years</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+                
+                <button class="btn" id="start-btn">Start Quiz! 🚀</button>
+            </div>
+        </div>
+        
+        <!-- Quiz Page -->
+        <div class="quiz-page" id="quiz-page" style="display: none;">
+            <h2>Let's Test Your Friendship! <span class="glow">💖</span></h2>
+            
+            <div class="progress-text" id="progress-text">Question 1 of 12</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="card" id="question-container">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+            
+            <button class="btn" id="next-btn" style="display: none;">Next Question ➡️</button>
+            <button class="btn btn-secondary" id="back-btn">⬅️ Back</button>
+        </div>
+        
+        <!-- Results Page -->
+        <div class="result-container" id="result-container">
+            <h2>Your Friendship Score <span class="glow">🏆</span></h2>
+            
+            <div class="card">
+                <div class="score" id="score">0%</div>
+                <div class="message" id="message"></div>
+                
+                <div class="gif-container" id="gif-container">
+                    <!-- GIF will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="share-container">
+                    <div class="share-input" id="share-link">Copy this link to share with friends!</div>
+                    <button class="btn" id="share-btn">Challenge Your Friend! 📲</button>
+                    <button class="btn btn-secondary" id="restart-btn">Take Quiz Again! 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Quiz data
+        const quizData = [
+            {
+                question: "What's your friend's favorite song? 🎵",
+                options: [
+                    { text: "Dance Monkey by Tones and I", emoji: "🕺", correct: false },
+                    { text: "Their favorite obscure indie track no one knows", emoji: "🎸", correct: true },
+                    { text: "Baby Shark (they secretly love it)", emoji: "🦈", correct: false },
+                    { text: "Whatever's trending on TikTok", emoji: "📱", correct: false }
+                ]
+            },
+            {
+                question: "What's your friend's dream car? 🚗",
+                options: [
+                    { text: "Tesla Cybertruck", emoji: "⚡", correct: false },
+                    { text: "A reliable Toyota that never breaks down", emoji: "🚙", correct: true },
+                    { text: "A pink convertible (they're basic like that)", emoji: "💖", correct: false },
+                    { text: "They don't drive, they teleport", emoji: "👽", correct: false }
+                ]
+            },
+            {
+                question: "What's their go-to comfort food? 🍜",
+                options: [
+                    { text: "Mac & Cheese (the fanciest kind)", emoji: "🧀", correct: false },
+                    { text: "Their mom's special recipe", emoji: "👩‍🍳", correct: true },
+                    { text: "Anything with extra hot sauce", emoji: "🔥", correct: false },
+                    { text: "Avocado toast (they're that person)", emoji: "🥑", correct: false }
+                ]
+            },
+            {
+                question: "Where would they choose for a dream vacation? ✈️",
+                options: [
+                    { text: "Bali for the Instagram pics", emoji: "🌴", correct: false },
+                    { text: "A cozy cabin in the mountains", emoji: "🏔️", correct: true },
+                    { text: "Las Vegas (what happens there stays there)", emoji: "🎰", correct: false },
+                    { text: "Their couch with Netflix", emoji: "🛋️", correct: false }
+                ]
+            },
+            {
+                question: "What's their birth month? 🎂",
+                options: [
+                    { text: "January (Capricorn/Aquarius)", emoji: "⛄", correct: false },
+                    { text: "July (Cancer/Leo)", emoji: "🌞", correct: true },
+                    { text: "October (Libra/Scorpio)", emoji: "🎃", correct: false },
+                    { text: "They're a leap year baby (Feb 29)", emoji: "🐸", correct: false }
+                ]
+            },
+            {
+                question: "How do they take their coffee? ☕",
+                options: [
+                    { text: "Black, like their soul", emoji: "🖤", correct: false },
+                    { text: "With exactly 2 sugars and a splash of oat milk", emoji: "🥛", correct: true },
+                    { text: "They don't drink coffee (energy drinks only)", emoji: "⚡", correct: false },
+                    { text: "Frappuccino with extra whipped cream", emoji: "🍦", correct: false }
+                ]
+            },
+            {
+                question: "What's their most used emoji? 💬",
+                options: [
+                    { text: "😂 (they laugh at everything)", emoji: "😂", correct: false },
+                    { text: "🤷 (their signature move)", emoji: "🤷", correct: true },
+                    { text: "🍕 (food is life)", emoji: "🍕", correct: false },
+                    { text: "💀 (dark humor only)", emoji: "💀", correct: false }
+                ]
+            },
+            {
+                question: "What would they do on a free weekend? 🏖️",
+                options: [
+                    { text: "Binge-watch an entire series in one sitting", emoji: "📺", correct: false },
+                    { text: "Go hiking and post nature pics", emoji: "🥾", correct: true },
+                    { text: "Sleep for 14 hours straight", emoji: "😴", correct: false },
+                    { text: "Host an impromptu party", emoji: "🎉", correct: false }
+                ]
+            },
+            {
+                question: "What's their biggest pet peeve? 😤",
+                options: [
+                    { text: "People who chew loudly", emoji: "🍽️", correct: false },
+                    { text: "When someone is late without texting", emoji: "⏰", correct: true },
+                    { text: "Socks with sandals (instant rage)", emoji: "🧦", correct: false },
+                    { text: "Spoilers for their favorite show", emoji: "🤫", correct: false }
+                ]
+            },
+            {
+                question: "What superpower would they choose? 🦸",
+                options: [
+                    { text: "Invisibility (for all the sneaky stuff)", emoji: "👻", correct: false },
+                    { text: "Teleportation (no more traffic)", emoji: "✈️", correct: true },
+                    { text: "Mind reading (they're nosy like that)", emoji: "🧠", correct: false },
+                    { text: "Time travel (to fix all their mistakes)", emoji: "⏳", correct: false }
+                ]
+            },
+            {
+                question: "What's their most embarrassing childhood memory? 👶",
+                options: [
+                    { text: "That time they peed in the pool", emoji: "🏊", correct: false },
+                    { text: "Singing solo at the school concert and forgetting the words", emoji: "🎤", correct: true },
+                    { text: "Their mom showing baby pics to their crush", emoji: "📸", correct: false },
+                    { text: "Wearing their underwear over their pants 'like Superman'", emoji: "🦸", correct: false }
+                ]
+            },
+            {
+                question: "What would be their last meal request? 🍽️",
+                options: [
+                    { text: "An all-you-can-eat buffet", emoji: "🍱", correct: false },
+                    { text: "Their grandma's famous cookies", emoji: "🍪", correct: true },
+                    { text: "Something ridiculously expensive like gold-leaf steak", emoji: "💰", correct: false },
+                    { text: "Pizza (because pizza is always the answer)", emoji: "🍕", correct: false }
+                ]
+            }
+        ];
+        
+        // DOM elements
+        const landingPage = document.getElementById('landing-page');
+        const quizPage = document.getElementById('quiz-page');
+        const resultContainer = document.getElementById('result-container');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const nextButton = document.getElementById('next-btn');
+        const backButton = document.getElementById('back-btn');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreElement = document.getElementById('score');
+        const messageElement = document.getElementById('message');
+        const gifContainer = document.getElementById('gif-container');
+        const shareLink = document.getElementById('share-link');
+        const shareButton = document.getElementById('share-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const startButton = document.getElementById('start-btn');
+        const userNameInput = document.getElementById('user-name');
+        const userAgeInput = document.getElementById('user-age');
+        const confettiContainer = document.getElementById('confetti-container');
+        
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let userName = '';
+        let userAge = '';
+        
+        // GIFs for different score ranges
+        const gifs = {
+            high: '1000003144.gif',
+            medium: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjF1d2R2b3V2dDl1a2RzZ3V5b2J6Y2J4eGJ6dWl1a2Q1bWx0eWZ5eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6Zt481isNVuQI1l6/giphy.gif',
+            low: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjF1d2R2b3V2dDl1a2RzZ3V5b2J6Y2J4eGJ6dWl1a2Q1bWx0eWZ5eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HU7JI7H4JyPo3KU/giphy.gif'
+        };
+        
+        // Messages for different score ranges
+        const messages = {
+            high: [
+                "Soulmate Alert! 👯♀️ You two are basically the same person!",
+                "BFF Goals! 🥳 You know them better than they know themselves!",
+                "Mind Reader! 🔮 Are you sure you're not psychic?"
+            ],
+            medium: [
+                "Solid Friend Zone! 👍 You know them pretty well!",
+                "Good Job! ✨ A few more hangouts and you'll know everything!",
+                "Almost There! 💪 You're a great friend but there's room to grow!"
+            ],
+            low: [
+                "Do you even know them? 😅 Time for some deep conversations!",
+                "Stranger Danger! 🚨 Maybe spend more time together?",
+                "Oof... 😬 Did you just meet yesterday?"
+            ]
+        };
+        
+        // Audio for high score
+        const celebrationSound = new Audio('YAYKids(Celebration)SoundEffect[FreeDownload]-SoundCFX.mp3');
+
+        // Start quiz
+        startButton.addEventListener('click', () => {
+            userName = userNameInput.value.trim();
+            userAge = userAgeInput.value;
+            
+            if (!userName || !userAge) {
+                alert("Please enter your name and age to start the quiz!");
+                return;
+            }
+            
+            // Animate transition
+            gsap.to(landingPage, {
+                opacity: 0,
+                y: -50,
+                duration: 0.5,
+                onComplete: () => {
+                    landingPage.style.display = 'none';
+                    quizPage.style.display = 'block';
+                    loadQuestion();
+                    gsap.from(quizPage, {
+                        opacity: 0,
+                        y: 50,
+                        duration: 0.5
+                    });
+                }
+            });
+        });
+        
+        // Load question
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.innerHTML = `
+                    <span class="option-emoji">${option.emoji}</span>
+                    <span>${option.text}</span>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(optionElement, index));
+                optionsElement.appendChild(optionElement);
+            });
+            
+            // Update progress
+            progressText.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+            
+            // Hide next button until an option is selected
+            nextButton.style.display = 'none';
+            selectedOption = null;
+            
+            // Animation for new question
+            gsap.from(questionElement, { opacity: 0, y: 20, duration: 0.3 });
+            gsap.from(optionsElement.children, {
+                opacity: 0,
+                y: 20,
+                duration: 0.3,
+                stagger: 0.1
+            });
+        }
+        
+        // Select option
+        function selectOption(optionElement, optionIndex) {
+            // Deselect previous selection if any
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Select new option
+            optionElement.classList.add('selected');
+            selectedOption = optionIndex;
+            
+            // Show next button
+            nextButton.style.display = 'block';
+            gsap.from(nextButton, { opacity: 0, y: 20, duration: 0.3 });
+        }
+        
+        // Next question
+        nextButton.addEventListener('click', () => {
+            if (selectedOption === null) return;
+            
+            // Check if answer is correct
+            const currentQuestion = quizData[currentQuestionIndex];
+            if (currentQuestion.options[selectedOption].correct) {
+                score++;
+            }
+            
+            // Move to next question or show results
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+        
+        // Back button
+        backButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                score--; // Assuming they got the previous question right
+                loadQuestion();
+            } else {
+                // Go back to landing page
+                quizPage.style.display = 'none';
+                landingPage.style.display = 'block';
+                gsap.from(landingPage, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.5
+                });
+            }
+        });
+        
+        // Show results
+        function showResults() {
+            const percentage = Math.round((score / quizData.length) * 100);
+            scoreElement.textContent = `${percentage}%`;
+            
+            // Determine message and GIF based on score
+            let message, gif;
+            if (percentage >= 90) {
+                message = messages.high[Math.floor(Math.random() * messages.high.length)];
+                gif = gifs.high;
+            } else if (percentage >= 60) {
+                message = messages.medium[Math.floor(Math.random() * messages.medium.length)];
+                gif = gifs.medium;
+            } else {
+                message = messages.low[Math.floor(Math.random() * messages.low.length)];
+                gif = gifs.low;
+            }
+            
+            messageElement.textContent = message;
+            gifContainer.innerHTML = `<img src="${gif}" alt="Result GIF">`;
+            
+            // Generate share link
+            shareLink.textContent = `${window.location.href.split('?')[0]}?name=${encodeURIComponent(userName)}&score=${percentage}`;
+            
+            // Hide quiz page and show results
+            quizPage.style.display = 'none';
+            resultContainer.style.display = 'block';
+            
+            // Animation for results
+            gsap.from(resultContainer, {
+                opacity: 0,
+                y: 50,
+                duration: 0.5
+            });
+            
+            // Confetti for high scores
+            if (percentage >= 80) {
+                confettiContainer.style.display = 'block';
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 100,
+                        spread: 100,
+                        origin: { y: 0.6 }
+                    });
+                }, 500);
+                celebrationSound.play(); // Play sound effect
+            }
+            
+            // Score animation
+            gsap.from(scoreElement, {
+                scale: 0.5,
+                duration: 1,
+                ease: "elastic.out(1, 0.5)"
+            });
+        }
+        
+        // Share button
+        shareButton.addEventListener('click', () => {
+            shareLink.select();
+            document.execCommand('copy');
+            
+            // Show copied message
+            const originalText = shareLink.textContent;
+            shareLink.textContent = "Copied to clipboard! 📋";
+            
+            setTimeout(() => {
+                shareLink.textContent = originalText;
+            }, 2000);
+        });
+        
+        // Restart quiz
+        restartButton.addEventListener('click', () => {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedOption = null;
+            
+            // Hide results and show landing page
+            resultContainer.style.display = 'none';
+            landingPage.style.display = 'block';
+            confettiContainer.style.display = 'none';
+            
+            // Animation
+            gsap.from(landingPage, {
+                opacity: 0,
+                y: 50,
+                duration: 0.5
+            });
+        });
+        
+        // Check for shared score in URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedName = urlParams.get('name');
+            const sharedScore = urlParams.get('score');
+            
+            if (sharedName && sharedScore) {
+                userNameInput.value = sharedName;
+                alert(`${sharedName} scored ${sharedScore}% on the friendship quiz! Can you beat them?`);
+            }
+            
+            // Add more floating emojis dynamically
+            for (let i = 0; i < 10; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji-float';
+                emoji.textContent = ['💖', '✨', '🎯', '🌈', '👯', '🎉', '🦄', '🍕', '🐶', '🦋'][i];
+                emoji.style.top = `${Math.random() * 100}%`;
+                emoji.style.left = `${Math.random() * 100}%`;
+                emoji.style.animationDelay = `${Math.random() * 5}s`;
+                emoji.style.fontSize = `${Math.random() * 2 + 1.5}rem`;
+                document.body.appendChild(emoji);
+            }
+        });
+    </script>
+</body>
+</html>
+
